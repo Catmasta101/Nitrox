@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -60,13 +60,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AttachedProperties\ButtonProperties.cs" />
-    <Compile Include="DependencyObjectExtensions.cs" />
-    <Compile Include="Events\ServerStartEventArgs.cs" />
+    <Compile Include="Downloader.cs" />
+    <Compile Include="LauncherConfig.cs" />
+    <Compile Include="Models\Converters\DateToRelativeDateConverter.cs" />
+    <Compile Include="Models\Converters\PlatformToIconConverter.cs" />
+    <Compile Include="Models\Converters\UpdateToIconConverter.cs" />
+    <Compile Include="Models\NitroxBlog.cs" />
+    <Compile Include="Models\NitroxChangelog.cs" />
+    <Compile Include="Models\Properties\ButtonProperties.cs" />
+    <Compile Include="Models\Events\ServerStartEventArgs.cs" />
     <Compile Include="LauncherLogic.cs" />
-    <Compile Include="PageBase.cs" />
+    <Compile Include="Models\PageBase.cs" />
+    <Compile Include="Models\NitroxRelease.cs" />
+    <Compile Include="Pages\BlogPage.xaml.cs">
+      <DependentUpon>BlogPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CommunityPage.xaml.cs">
+      <DependentUpon>CommunityPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LauncherNotifier.cs" />
     <Compile Include="Pages\LaunchGamePage.xaml.cs">
       <DependentUpon>LaunchGamePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\LibraryPage.xaml.cs">
+      <DependentUpon>LibraryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\OptionPage.xaml.cs">
       <DependentUpon>OptionPage.xaml</DependentUpon>
@@ -77,7 +94,11 @@
     <Compile Include="Pages\ServerPage.xaml.cs">
       <DependentUpon>ServerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Patching\NitroxEntryPatch.cs" />
+    <Compile Include="Pages\UpdatePage.xaml.cs">
+      <DependentUpon>UpdatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Patching\NitroxEntryPatch.cs" />
+    <Compile Include="ServerLogic.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -90,7 +111,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\BlogPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CommunityPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\LaunchGamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\LibraryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -106,10 +139,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\UpdatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patching\AppHelper.cs" />
-    <Compile Include="Patching\QModHelper.cs" />
+    <Compile Include="Models\Utils\WindowsHelper.cs" />
+    <Compile Include="Models\Utils\QModHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -159,6 +196,24 @@
     <Resource Include="Fonts\OpenSans-Regular.ttf" />
     <Resource Include="Fonts\OpenSans-Semibold.ttf" />
     <Resource Include="Fonts\OpenSans-SemiboldItalic.ttf" />
+    <Resource Include="Fonts\Inter-Black.ttf" />
+    <Resource Include="Fonts\Inter-BlackItalic.ttf" />
+    <Resource Include="Fonts\Inter-Bold.ttf" />
+    <Resource Include="Fonts\Inter-BoldItalic.ttf" />
+    <Resource Include="Fonts\Inter-ExtraBold.ttf" />
+    <Resource Include="Fonts\Inter-ExtraBoldItalic.ttf" />
+    <Resource Include="Fonts\Inter-ExtraLight.ttf" />
+    <Resource Include="Fonts\Inter-ExtraLightItalic.ttf" />
+    <Resource Include="Fonts\Inter-Italic.ttf" />
+    <Resource Include="Fonts\Inter-Light.ttf" />
+    <Resource Include="Fonts\Inter-LightItalic.ttf" />
+    <Resource Include="Fonts\Inter-Medium.ttf" />
+    <Resource Include="Fonts\Inter-MediumItalic.ttf" />
+    <Resource Include="Fonts\Inter-Regular.ttf" />
+    <Resource Include="Fonts\Inter-SemiBold.ttf" />
+    <Resource Include="Fonts\Inter-SemiBoldItalic.ttf" />
+    <Resource Include="Fonts\Inter-Thin.ttf" />
+    <Resource Include="Fonts\Inter-ThinItalic.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -171,20 +226,13 @@
     <Resource Include="Images\PlayGameImage.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\minimize.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\exit.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\SubnauticaMain.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\EscapePod.png" />
     <Resource Include="Images\Vines.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Nitrox.png" />
+    <Resource Include="Images\oldNitroxLogo.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nitrox.Bootloader\Nitrox.Bootloader.csproj">
@@ -227,15 +275,12 @@
     <None Include="Images\material-design-icons\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="nitroxLogo.png" />
+    <Resource Include="Images\nitroxLogo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\options.png" />
-    <Resource Include="Images\play.png" />
-    <Resource Include="Images\server.png" />
+    <Resource Include="Images\material-design-icons\options.png" />
+    <Resource Include="Images\material-design-icons\play.png" />
+    <Resource Include="Images\material-design-icons\server.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\social\discord.png" />
@@ -260,10 +305,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="dnlib">
-      <Version>3.3.2</Version>
+      <Version>3.3.5</Version>
     </PackageReference>
-    <PackageReference Include="Lib.Harmony">
-      <Version>2.0.4.0</Version>
+    <PackageReference Include="LitJson">
+      <Version>0.16.0</Version>
+    </PackageReference>
+    <PackageReference Include="ToastNotifications">
+      <Version>2.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="ToastNotifications.Messages">
+      <Version>2.5.1</Version>
     </PackageReference>
     <PackageReference Include="WindowsAPICodePack-Core">
       <Version>1.1.2</Version>
@@ -271,6 +322,57 @@
     <PackageReference Include="WindowsAPICodePack-Shell">
       <Version>1.1.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PlayBoxImage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\material-design-icons\close-w-10.png" />
+    <Resource Include="Images\material-design-icons\max-w-10.png" />
+    <Resource Include="Images\material-design-icons\min-w-10.png" />
+    <Resource Include="Images\material-design-icons\restore-w-10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\material-design-icons\blog.png" />
+    <Resource Include="Images\material-design-icons\community.png" />
+    <Resource Include="Images\material-design-icons\download.png" />
+    <Resource Include="Images\material-design-icons\library.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\social\discordIco.png" />
+    <Resource Include="Images\social\githubIco.png" />
+    <Resource Include="Images\social\redditIco.png" />
+    <Resource Include="Images\social\twitterIco.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\communityHeader.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Fonts\InterLICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\nitroxIco.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\material-design-icons\downloadDot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\nitroxGallery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\store-icons\discord-2x.png" />
+    <Resource Include="Images\store-icons\epic-2x.png" />
+    <Resource Include="Images\store-icons\steam-2x.png" />
+    <Resource Include="Images\store-icons\xbox-2x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\store-icons\missing-2x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\store-icons\pirated-2x.png" />
   </ItemGroup>
   <!-- Move assets from Subnautica assets to launcher.
        TODO: Try fix this as a project reference to Nitrox.Subnautica.Assets that will copy the files on build automatically. -->

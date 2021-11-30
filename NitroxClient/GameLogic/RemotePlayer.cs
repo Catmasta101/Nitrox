@@ -199,7 +199,7 @@ namespace NitroxClient.GameLogic
                     Detach();
                     ArmsController.SetWorldIKTarget(null, null);
 
-                    Vehicle.GetComponent<MultiplayerVehicleControl<Vehicle>>().Exit();
+                    Vehicle.GetComponent<MultiplayerVehicleControl>().Exit();
                 }
 
                 if (newVehicle)
@@ -209,7 +209,7 @@ namespace NitroxClient.GameLogic
                     Attach(newVehicle.playerPosition.transform);
                     ArmsController.SetWorldIKTarget(newVehicle.leftHandPlug, newVehicle.rightHandPlug);
 
-                    newVehicle.GetComponent<MultiplayerVehicleControl<Vehicle>>().Enter();
+                    newVehicle.GetComponent<MultiplayerVehicleControl>().Enter();
                 }
 
                 RigidBody.isKinematic = newVehicle;
@@ -234,6 +234,11 @@ namespace NitroxClient.GameLogic
             {
                 case AnimChangeType.UNDERWATER:
                     AnimationController["is_underwater"] = state != AnimChangeState.OFF;
+                    break;
+                case AnimChangeType.BENCH:
+                    AnimationController["cinematics_enabled"] = state != AnimChangeState.UNSET;
+                    AnimationController["bench_sit"] = state == AnimChangeState.ON;
+                    AnimationController["bench_stand_up"] = state == AnimChangeState.OFF;
                     break;
             }
         }

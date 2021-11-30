@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using NitroxModel.Helper;
-using NitroxModel.OS;
+using NitroxModel.Platforms.OS.Shared;
 
 namespace NitroxModel.Serialization
 {
@@ -26,7 +26,7 @@ namespace NitroxModel.Serialization
             }
         }
 
-        public static string DefaultFile => Path.Combine(NitroxAppData.Instance.LauncherPath, SERVERS_FILE_NAME);
+        public static string DefaultFile => Path.Combine(NitroxUser.LauncherPath, SERVERS_FILE_NAME);
 
         public IEnumerable<Entry> Entries => entries;
 
@@ -52,7 +52,7 @@ namespace NitroxModel.Serialization
                 {
                     continue;
                 }
-                
+
                 list.entries.Add(entry);
             }
             return list;
@@ -139,7 +139,7 @@ namespace NitroxModel.Serialization
                     default:
                         throw new Exception($"Expected server entry to have 2 or 3 parts: {line}");
                 }
-                
+
                 string name = parts[0].Trim();
                 return new Entry(name, address, port);
             }

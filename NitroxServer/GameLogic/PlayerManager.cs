@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NitroxModel.DataStructures;
 using NitroxModel.DataStructures.GameLogic;
+using NitroxModel.DataStructures.Unity;
 using NitroxModel.DataStructures.Util;
 using NitroxModel.Helper;
 using NitroxModel.MultiplayerSession;
@@ -18,7 +19,7 @@ namespace NitroxServer.GameLogic
         private readonly ThreadSafeDictionary<string, Player> allPlayersByName;
         private readonly ThreadSafeDictionary<NitroxConnection, ConnectionAssets> assetsByConnection = new();
         private readonly ThreadSafeDictionary<string, PlayerContext> reservations = new();
-        private readonly ThreadSafeCollection<string> reservedPlayerNames = new ThreadSafeCollection<string>(new HashSet<string> { "Player" }); // "Player" is often used to identify the local player and should not be used by any user
+        private readonly ThreadSafeSet<string> reservedPlayerNames = new("Player"); // "Player" is often used to identify the local player and should not be used by any user
 
         private readonly ServerConfig serverConfig;
         private ushort currentPlayerId;

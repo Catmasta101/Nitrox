@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using NitroxClient.GameLogic.ChatUI;
+using NitroxClient.GameLogic.Settings;
 using NitroxModel.Core;
+using NitroxModel.Logger;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,8 +30,8 @@ namespace NitroxClient.MonoBehaviours.Gui.Chat
 
         public string InputText
         {
-            get { return inputField.text; }
-            set { inputField.text = value; }
+            get => inputField.text;
+            set => inputField.text = value;
         }
 
         public IEnumerator SetupChatComponents()
@@ -53,6 +55,10 @@ namespace NitroxClient.MonoBehaviours.Gui.Chat
 
             yield return new WaitForEndOfFrame(); //Needed so Select() works on initialization
             IsReady = true;
+            if (NitroxPrefs.SilenceChat.Value)
+            {
+                Log.InGame(Language.main.Get("Nitrox_SilencedChatNotif"));
+            }
         }
 
         public void WriteLogEntry(string playerName, string message, Color color)

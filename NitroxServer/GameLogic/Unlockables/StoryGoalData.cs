@@ -10,17 +10,23 @@ namespace NitroxServer.GameLogic.Unlockables
     public class StoryGoalData
     {
         [JsonProperty, ProtoMember(1)]
-        public ThreadSafeCollection<string> CompletedGoals { get; } = new ThreadSafeCollection<string>();
+        public ThreadSafeSet<string> CompletedGoals { get; } = new();
 
         [JsonProperty, ProtoMember(2)]
-        public ThreadSafeCollection<string> RadioQueue { get; } = new ThreadSafeCollection<string>();
+        public ThreadSafeList<string> RadioQueue { get; } = new();
 
         [JsonProperty, ProtoMember(3)]
-        public ThreadSafeCollection<string> GoalUnlocks { get; } = new ThreadSafeCollection<string>();
+        public ThreadSafeSet<string> GoalUnlocks { get; } = new();
 
-        public void RemovedLatestRadioMessage()
+        public bool RemovedLatestRadioMessage()
         {
+            if (RadioQueue.Count <= 0)
+            {
+                return false;
+            }
+            
             RadioQueue.RemoveAt(0);
+            return true;
         }
 
         public InitialStoryGoalData GetInitialStoryGoalData()

@@ -5,6 +5,7 @@ using NitroxClient.MonoBehaviours;
 using NitroxModel.Core;
 using NitroxModel.DataStructures;
 using NitroxModel.DataStructures.GameLogic;
+using NitroxModel.Helper;
 using NitroxModel.Packets;
 using NitroxModel_Subnautica.DataStructures;
 
@@ -12,13 +13,12 @@ namespace NitroxPatcher.Patches.Dynamic
 {
     public class QuickSlots_SelectInternal_Patch : NitroxPatch, IDynamicPatch
     {
-        private static readonly MethodInfo targetMethod = typeof(QuickSlots).GetMethod("SelectInternal", BindingFlags.NonPublic | BindingFlags.Instance);
-        private static readonly FieldInfo bindingField = typeof(QuickSlots).GetField("binding", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly MethodInfo TARGET_METHOD = Reflect.Method((QuickSlots t) => t.SelectInternal(default(int)));
         private static LocalPlayer player;
 
         public static void Prefix(QuickSlots __instance, int slotID, ref NitroxTechType __state)
         {
-            InventoryItem item = ((InventoryItem[])bindingField.GetValue(__instance))[slotID];
+            InventoryItem item = __instance.binding[slotID];
             if (item == null)
             {
                 return;
@@ -35,14 +35,14 @@ namespace NitroxPatcher.Patches.Dynamic
             Pickupable pickupable = ____heldItem.item;
             NitroxId itemId = NitroxEntity.GetId(pickupable.gameObject);
             PlayerTool component = pickupable.GetComponent<PlayerTool>();
-            PlayerHeldItemChangedType type = component ? PlayerHeldItemChangedType.DRAW_AS_TOOL : PlayerHeldItemChangedType.DRAW_AS_ITEM;
+            PlayerHeldItemChanged.ChangeType type = component ? PlayerHeldItemChanged.ChangeType.DRAW_AS_TOOL : PlayerHeldItemChanged.ChangeType.DRAW_AS_ITEM;
             player.BroadcastHeldItemChanged(itemId, type, __state);
         }
 
         public override void Patch(Harmony harmony)
         {
             player = NitroxServiceLocator.LocateService<LocalPlayer>();
-            PatchMultiple(harmony, targetMethod, true, true, false, false);
+            PatchMultiple(harmony, TARGET_METHOD, prefix:true, postfix:true);
         }
     }
 }

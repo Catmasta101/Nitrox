@@ -18,18 +18,18 @@ namespace NitroxClient.Communication.Packets.Processors
 
         public override void Process(StoryEventSend packet)
         {
-            switch (packet.StoryEventType)
+            switch (packet.Type)
             {
-                case StoryEventType.PDA:
-                case StoryEventType.RADIO:
-                case StoryEventType.ENCYCLOPEDIA:
-                case StoryEventType.STORY:
+                case StoryEventSend.EventType.PDA:
+                case StoryEventSend.EventType.RADIO:
+                case StoryEventSend.EventType.ENCYCLOPEDIA:
+                case StoryEventSend.EventType.STORY:
                     using (NitroxServiceLocator.LocateService<IPacketSender>().Suppress<StoryEventSend>())
                     {
-                        StoryGoal.Execute(packet.Key, (Story.GoalType)packet.StoryEventType);
+                        StoryGoal.Execute(packet.Key, (Story.GoalType)packet.Type);
                     }
                     break;
-                case StoryEventType.EXTRA:
+                case StoryEventSend.EventType.EXTRA:
                     ExecuteExtraEvent(packet.Key);
                     break;
             }
@@ -48,7 +48,7 @@ namespace NitroxClient.Communication.Packets.Processors
         private void ExplodeAurora()
         {
             CrashedShipExploder main = CrashedShipExploder.main;
-            main.timeToStartCountdown = ((Utils.ScalarMonitor)main.ReflectionGet("timeMonitor", false, false)).Get() - 25f + 1f;
+            main.timeToStartCountdown = main.timeMonitor.Get() - 25f + 1f;
             main.timeToStartWarning = main.timeToStartCountdown - 1f;
         }
     }

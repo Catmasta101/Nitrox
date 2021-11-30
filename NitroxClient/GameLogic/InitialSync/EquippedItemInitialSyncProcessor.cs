@@ -21,7 +21,7 @@ namespace NitroxClient.GameLogic.InitialSync
         public EquippedItemInitialSyncProcessor(IPacketSender packetSender)
         {
             this.packetSender = packetSender;
-            
+
             DependentProcessors.Add(typeof(PlayerInitialSyncProcessor));  // the player needs to be configured before we can equip items
             DependentProcessors.Add(typeof(RemotePlayerInitialSyncProcessor)); // remote players can also equip items
             DependentProcessors.Add(typeof(VehicleInitialSyncProcessor)); // Equipment also includes vehicles modules
@@ -50,18 +50,18 @@ namespace NitroxClient.GameLogic.InitialSync
                         Optional<Equipment> opEquipment = EquipmentHelper.FindEquipmentComponent(owner);
 
                         if (opEquipment.HasValue)
-                        {                            
+                        {
                             Equipment equipment = opEquipment.Value;
-                            InventoryItem inventoryItem = new InventoryItem(pickupable);
+                            InventoryItem inventoryItem = new(pickupable);
                             inventoryItem.container = equipment;
                             inventoryItem.item.Reparent(equipment.tr);
 
-                            Dictionary<string, InventoryItem> itemsBySlot = (Dictionary<string, InventoryItem>)equipment.ReflectionGet("equipment");
+                            Dictionary<string, InventoryItem> itemsBySlot = equipment.equipment;
                             itemsBySlot[equippedItem.Slot] = inventoryItem;
 
-                            equipment.ReflectionCall("UpdateCount", false, false, new object[] { pickupable.GetTechType(), true });
+                            equipment.UpdateCount(pickupable.GetTechType(), true);
                             Equipment.SendEquipmentEvent(pickupable, 0, owner, equippedItem.Slot);
-                            equipment.ReflectionCall("NotifyEquip", false, false, new object[] { equippedItem.Slot, inventoryItem });
+                            equipment.NotifyEquip(equippedItem.Slot, inventoryItem);
                         }
                         else
                         {

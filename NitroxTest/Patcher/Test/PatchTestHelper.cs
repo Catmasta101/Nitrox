@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
@@ -25,7 +26,7 @@ namespace NitroxTest.Patcher.Test
             Validate.NotNull(targetMethod);
             return GetInstructionsFromIL(GetILInstructions(targetMethod));
         }
-        
+
         public static ReadOnlyCollection<CodeInstruction> GetInstructionsFromMethod(MethodInfo targetMethod)
         {
             Validate.NotNull(targetMethod);

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using NitroxModel.Helper;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core;
@@ -14,23 +15,26 @@ namespace NitroxModel.Logger
 {
     public static class Log
     {
-        private static ILogger logger;
+        private static ILogger logger = Serilog.Core.Logger.None;
+        private static bool isSetup;
 
         public static string PlayerName
         {
             set => SetPlayerName(value);
         }
 
-        public static string LogDirectory { get; } = Path.GetFullPath(Path.Combine(Environment.GetEnvironmentVariable("NITROX_LAUNCHER_PATH") ?? "", "Nitrox Logs"));
+        public static string LogDirectory { get; } = Path.GetFullPath(Path.Combine(NitroxUser.LauncherPath ?? "", "Nitrox Logs"));
 
         public static string GetMostRecentLogFile() => new DirectoryInfo(LogDirectory).GetFiles().OrderByDescending(f => f.CreationTimeUtc).FirstOrDefault()?.FullName;
 
         public static void Setup(bool asyncConsoleWriter = false, InGameLogger inGameLogger = null, bool isConsoleApp = false, bool useConsoleLogging = true)
         {
-            if (logger != null)
+            if (isSetup)
             {
                 throw new Exception($"{nameof(Log)} setup should only be executed once.");
             }
+            isSetup = true;
+            
             PlayerName = "";
             logger = new LoggerConfiguration()
                      .MinimumLevel.Debug()
